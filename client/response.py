@@ -9,8 +9,8 @@ class Response:
         self.type = type
         self.data = data
     
-    async def handle(self, res, rej):
+    def handle(self, res, rej):
         if (self.type == ResponseTypes.accept):
-            await res(self.data)
+            res(self.data)
         elif (self.type == ResponseTypes.reject):
-            await rej(self.data)
+            rej(self.data)
