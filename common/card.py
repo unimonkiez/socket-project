@@ -17,7 +17,7 @@ class CardRanks(Enum):
     def displayName(self):
         return self.value.displayName
 
-    ace = CardRank("a", 0, "ace")
+    ace = CardRank("a", 13, "ace")
     num2 = CardRank("2", 1, "2")
     num3 = CardRank("3", 2, "3")
     num4 = CardRank("4", 3, "4")
@@ -78,12 +78,10 @@ class Card:
 
           if (rankNumber == compareRankNumber):
                 return CardCompare.ties
-          elif (rankNumber < compareRankNumber):
+          elif (rankNumber > compareRankNumber):
                 return CardCompare.wins
           else:
                 return CardCompare.loses
-
-
     
     def toString(self):
         return "{}{}".format(self.rank.text, self.suit.text)

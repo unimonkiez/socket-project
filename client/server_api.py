@@ -8,15 +8,15 @@ serverGame = None
 
 async def start_game(amount):
     # await asyncio.sleep(1)
-
-    serverGame = ServerGame(amount)
+    global serverGame
+    serverGame = ServerGame(20)
 
     res = Response(
         ResponseTypes.accept,
         {
             "round": 1,
-            "amountLeft": 50,
-            "dealt": serverGame.playerCard
+            "amountLeft": serverGame.amount,
+            "dealt": serverGame.playersCard
         }
     )
 
@@ -30,15 +30,17 @@ async def start_game(amount):
     return res
 
 async def bet(amount):
-    serverGame.setBet(amount)
+    global serverGame
+    serverGame.set_bet(amount)
 
     resDict = {
-        "round": serverGame.round,
+        "round": serverGame.rounds,
         "dealersCard": serverGame.dealersCard,
         "playersCard": serverGame.playersCard,
         "result": serverGame.result,
-        "originalBet": serverGame.bet,
-        "amountLeft": 50,
+        "bet": serverGame.bet,
+        "isWar": serverGame.isWar,
+        "amountLeft": serverGame.amount,
         "dealt": None
     }
 
@@ -54,24 +56,38 @@ async def bet(amount):
     return res
 
 async def tie_break(isWar):
+    global serverGame
     serverGame.tie_break(isWar)
     if (isWar):
-        print("TODO: war")
-        # res = Response(
-        #     ResponseTypes.accept,
-        #     {
-        #         "round": 1,
-        #         "dealers": Card(CardRanks.num3, CardSuits.hearts),
-        #         "result": GameResults.tie,
-        #         "dealt": Card(CardRanks.ace, CardSuits.hearts)
-        #     }
-        # )
+        resDict = {
+            "round": serverGame.rounds,
+            "dealersCard": serverGame.dealersCard,
+            "playersCard": serverGame.playersCard,
+            "result": serverGame.result,
+            "bet": serverGame.bet,
+            "originalBet": serverGame.originalBet,
+            "isWar": serverGame.isWar,
+            "cardsDiscarded": serverGame.cardsDiscarded,
+            "amountLeft": serverGame.amount,
+            "dealt": None
+        }
+
+        if (resDict["result"] != GameResults.tie):
+            serverGame.nextRound()
+            resDict["dealt"] = serverGame.playersCard
+
+        res = Response(
+            ResponseTypes.accept,
+            resDict
+        )
     else:
         resDict = {
-            "round": serverGame.round,
+            "round": serverGame.rounds,
             "dealers": serverGame.dealersCard,
             "result": GameResults.playerSurrender,
-            "originalBet": serverGame.bet,
+            "bet": serverGame.bet,
+            "originalBet": serverGame.originalBet,
+            "isWar": serverGame.isWar,
             "playerEarn": serverGame.playerEarn,
             "dealerEarn": serverGame.dealerEarn,
             "amountLeft": serverGame.amount,

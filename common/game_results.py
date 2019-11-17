@@ -15,4 +15,4 @@ class GameResults(Enum):
     tie = GameResult(0, 'a tie')
     dealerWin = GameResult(1, 'dealer won')
     playerWin = GameResult(2, 'player won')
-    playerSurrender = GameResult(2, 'player surrendered')
+    playerSurrender = GameResult(4, 'player surrendered')
