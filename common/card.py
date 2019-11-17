@@ -1,34 +1,54 @@
-from enum import Enum as _Enum
+from enum import Enum
 import random
+from collections import namedtuple
 
-class CardRanks(_Enum):
-        ace = "a"
-        num2 = "2"
-        num3 = "3"
-        num4 = "4"
-        num5 = "5"
-        num6 = "6"
-        num7 = "7"
-        num8 = "8"
-        num9 = "9"
-        num10 = "10"
-        jack = "j"
-        queen = "q"
-        king = "k"
+CardRank = namedtuple('CardRank', ['text', 'number', 'displayName'])
 
-class CardSuits(_Enum):
+class CardRanks(Enum):
+    @property
+    def text(self):
+        return self.value.text
+
+    @property
+    def number(self):
+        return self.value.number
+
+    @property
+    def displayName(self):
+        return self.value.displayName
+
+    ace = CardRank("a", 0, "ace")
+    num2 = CardRank("2", 1, "2")
+    num3 = CardRank("3", 2, "3")
+    num4 = CardRank("4", 3, "4")
+    num5 = CardRank("5", 4, "5")
+    num6 = CardRank("6", 5, "6")
+    num7 = CardRank("7", 6, "7")
+    num8 = CardRank("8", 7, "8")
+    num9 = CardRank("9", 8, "9")
+    num10 = CardRank("10", 9, "10")
+    jack = CardRank("j", 10, "jack")
+    queen = CardRank("q", 11, "queen")
+    king = CardRank("k", 12, "king")
+
+class CardSuits(Enum):
         clubs = "c"
         diamonds = "d"
         hearts = "h"
         spades = "s"
 
+class CardCompare(Enum):
+        wins = 0
+        loses = 1
+        ties = 2
+
 class Card:
     def __init__(self, rank, suit):
-        self._rank = rank
-        self._suit = suit
+        self.rank = rank
+        self.suit = suit
     
     @classmethod
-    def getRandomDeck():
+    def getRandomDeck(cls):
         deck = []
         for rank in (CardRanks):
               for suit in (CardSuits):
@@ -39,8 +59,8 @@ class Card:
         return deck
     
     @classmethod
-    def fromString(txt):
-        txtLength = len(txt);
+    def fromString(cls, txt):
+        txtLength = len(txt)
         rank = None
         suit = None
         if (txtLength == 2):
@@ -51,9 +71,22 @@ class Card:
           suit = txt[2:3]
         
         return Card(suit, rank)
+      
+    def compare(self, card):
+          rankNumber = self.rank.number
+          compareRankNumber = card.rank.number
+
+          if (rankNumber == compareRankNumber):
+                return CardCompare.ties
+          elif (rankNumber < compareRankNumber):
+                return CardCompare.wins
+          else:
+                return CardCompare.loses
+
+
     
     def toString(self):
-        return "{}{}".format(self._rank.value, self._suit.value)
+        return "{}{}".format(self.rank.text, self.suit.text)
       
     def toNiceString(self):
-        return "{} {}".format(self._rank.name.replace("num", "Number ").capitalize(), self._suit.name.capitalize())
+        return "{} of {}".format(self.rank.displayName.capitalize(), self.suit.name.capitalize())
