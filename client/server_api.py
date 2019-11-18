@@ -32,11 +32,17 @@ async def start_game(amount):
 
 async def play_again(isPlayingAgain):
     global serverGame
-    serverGame = None
+
+    if (isPlayingAgain):
+        serverGame.reshuffle()
 
     res = Response(
         ResponseTypes.accept,
         {
+            "round": 1,
+            "amountLeft": serverGame.amount,
+            "originalAmount": serverGame.originalAmount,
+            "dealt": serverGame.playersCard
         }
     )
 

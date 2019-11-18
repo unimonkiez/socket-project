@@ -10,15 +10,8 @@ class Game:
 
         self.amount = amount
         self.originalAmount = amount
-        self.ended = False
-        self._deck = Card.getRandomDeck()
-        self._rounds = []
-        self.nextRound()
-
-        # For running deck low on start on comment next lines
-        # for x in range(0, 48):
-        #     self._deck.pop()
-        # print("{} cards left".format(len(self._deck)))
+        self._rounds = None
+        self.reshuffle()
     
     @property
     def rounds(self):
@@ -67,6 +60,18 @@ class Game:
     @property
     def cardsDiscarded(self):
         return self._last_round["cardsDiscarded"]
+
+    def reshuffle(self):
+        self.ended = False
+        self._deck = Card.getRandomDeck()
+        if (self._rounds == None):
+            self._rounds = []
+        self.nextRound()
+
+        # For running deck low on start on comment next lines
+        # for x in range(0, 45):
+        #     self._deck.pop()
+        # print("{} cards left".format(len(self._deck)))
 
     def nextRound(self):
         self._validate_game()

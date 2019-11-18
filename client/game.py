@@ -21,7 +21,6 @@ class Game:
         if (txt != "q"):
             self.start()
 
-
     def _bet_success(self, res):
         self._process_result(res)
 
@@ -44,8 +43,7 @@ class Game:
         self._print_round_details(res)
     
     def _play_again_sucess(self, res):
-        self.start()
-
+        self._dealt(res)
 
     def _print_round_details(self, res):
         if (res["result"] == GameResults.playerSurrender):
@@ -124,7 +122,7 @@ class Game:
         return bet
 
     def _get_play_again(self):
-        txt = input("Play again?(Y/n)\n")
+        txt = input("Continue? (Y/n)\n")
         return txt != "n"
 
     def _get_is_war(self, res):
@@ -134,7 +132,7 @@ class Game:
             print("Don't have enough chips to go to war! surrenders")
             return False
         else:
-            txt = input("Go to war?(Y/n)\n")
+            txt = input("Go to war? (Y/n)\n")
             return txt != "n"
     
         
