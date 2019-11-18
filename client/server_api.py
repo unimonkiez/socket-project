@@ -16,6 +16,7 @@ async def start_game(amount):
         {
             "round": 1,
             "amountLeft": serverGame.amount,
+            "originalAmount": serverGame.originalAmount,
             "dealt": serverGame.playersCard
         }
     )
@@ -29,9 +30,20 @@ async def start_game(amount):
 
     return res
 
-async def bet(amount):
+async def play_again(isPlayingAgain):
     global serverGame
-    serverGame.set_bet(amount)
+    serverGame = None
+
+    res = Response(
+        ResponseTypes.accept,
+        {
+        }
+    )
+
+    return res
+
+def _create_res():
+    global serverGame
 
     resDict = {
         "round": serverGame.rounds,
@@ -39,14 +51,22 @@ async def bet(amount):
         "playersCard": serverGame.playersCard,
         "result": serverGame.result,
         "bet": serverGame.bet,
+        "originalBet": serverGame.originalBet,
+        "playerEarn": serverGame.playerEarn,
+        "dealerEarn": serverGame.dealerEarn,
         "isWar": serverGame.isWar,
+        "autoSurrender": serverGame.autoSurrender,
+        "cardsDiscarded": serverGame.cardsDiscarded,
         "amountLeft": serverGame.amount,
-        "dealt": None
+        "originalAmount": serverGame.originalAmount,
+        "dealt": None,
+        "ended": None
     }
 
     if (resDict["result"] != GameResults.tie):
         serverGame.nextRound()
         resDict["dealt"] = serverGame.playersCard
+        resDict["ended"] = serverGame.ended
 
     res = Response(
         ResponseTypes.accept,
@@ -55,57 +75,25 @@ async def bet(amount):
 
     return res
 
+async def bet(amount):
+    global serverGame
+    serverGame.set_bet(amount)
+
+    return _create_res()
+
 async def tie_break(isWar):
     global serverGame
     serverGame.tie_break(isWar)
-    if (isWar):
-        resDict = {
-            "round": serverGame.rounds,
-            "dealersCard": serverGame.dealersCard,
-            "playersCard": serverGame.playersCard,
-            "result": serverGame.result,
-            "bet": serverGame.bet,
-            "originalBet": serverGame.originalBet,
-            "isWar": serverGame.isWar,
-            "cardsDiscarded": serverGame.cardsDiscarded,
-            "amountLeft": serverGame.amount,
-            "dealt": None
-        }
 
-        if (resDict["result"] != GameResults.tie):
-            serverGame.nextRound()
-            resDict["dealt"] = serverGame.playersCard
-
-        res = Response(
-            ResponseTypes.accept,
-            resDict
-        )
-    else:
-        resDict = {
-            "round": serverGame.rounds,
-            "dealers": serverGame.dealersCard,
-            "result": GameResults.playerSurrender,
-            "bet": serverGame.bet,
-            "originalBet": serverGame.originalBet,
-            "isWar": serverGame.isWar,
-            "playerEarn": serverGame.playerEarn,
-            "dealerEarn": serverGame.dealerEarn,
-            "amountLeft": serverGame.amount,
-            "dealt": None
-        }
-        serverGame.nextRound()
-        resDict["dealt"] = serverGame.playersCard
-
-        res = Response(
-            ResponseTypes.accept,
-            resDict
-        )
-
-    return res
+    return _create_res()
 
 def start_game_sync(amount): 
     loop = asyncio.get_event_loop()
     return loop.run_until_complete(start_game(amount))
+
+def play_again_sync(amount): 
+    loop = asyncio.get_event_loop()
+    return loop.run_until_complete(play_again(amount))
 
 def bet_sync(amount): 
     loop = asyncio.get_event_loop()

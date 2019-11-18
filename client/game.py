@@ -28,10 +28,11 @@ class Game:
     def _process_result(self, res):
         result = res["result"]
         self._print_round_details(res)
-        if (result == GameResults.tie):
-            self._tie_break(res)
-        else:
-            self._round_done(res)
+        if (self._validate_game_not_ended(res)):
+            if (result == GameResults.tie):
+                self._tie_break(res)
+            else:
+                self._round_done(res)
 
     def _tie_break(self, res): 
         isWar = self._get_is_war(res)
@@ -45,9 +46,12 @@ class Game:
 
     def _print_round_details(self, res):
         if (res["result"] == GameResults.playerSurrender):
+            reason = ""
+            if (res["autoSurrender"]):
+                reason = " (Because there weren't enough cards for war)"
             print(
-                "\nRound {} tie breaker:\nPlayer surrendered!\nThe bet: {}$\nDealer won: {}$\nPlayer won: {}$\n"
-                .format(res["round"], res["bet"], res["dealerEarn"], res["playerEarn"])
+                "\nRound {} tie breaker:\nPlayer surrendered!{}\nThe bet: {}$\nDealer won: {}$\nPlayer won: {}$\n"
+                .format(res["round"], reason, res["bet"], res["dealerEarn"], res["playerEarn"])
             )
         else:
             secondLine = ""
@@ -67,6 +71,16 @@ class Game:
                 .format(res["round"], res["result"].displayName, secondLine, res["dealersCard"].toNiceString(), res["playersCard"].toNiceString(), lastLine)
             )
     
+    def _validate_game_not_ended(self, res):
+        ended = res["ended"]
+        if (ended):
+            print("The game has ended!\nPlayer won: {}$\n".format(res["amountLeft"] - res["originalAmount"]))
+            playAgain = self._get_play_again()
+            if (playAgain):
+                self.start()
+        
+        return ended == False
+            
     def _round_done(self, res):
         self._dealt(res)
 
@@ -75,7 +89,7 @@ class Game:
         while (amount == None):
             txt = input("\nPlease enter amount of cash ($) to convert to chips and start session:\n")
             try:
-                num = float(txt)
+                num = int(txt)
                 if (num <= 0):
                     print("Amount should be positive, \"{}\" is invalid, try again\n".format(num))
                 else:
@@ -91,7 +105,7 @@ class Game:
         while (bet == None):
             txt = input("\nYou got dealt the card {}, how much you want to bet? ({}$ left)\n".format(res["dealt"].toNiceString(), res["amountLeft"]))
             try:
-                num = float(txt)
+                num = int(txt)
                 if (num <= 0):
                     print("Bet should be positive, \"{}\" is invalid, try again\n".format(bet))
                 elif (num > amount):
@@ -103,6 +117,10 @@ class Game:
         
         return bet
 
+    def _get_play_again(self):
+        txt = input("Play again?(Y/n)\n")
+        return txt != "n"
+
     def _get_is_war(self, res):
         amount = res["amountLeft"]
         bet = res["bet"]
@@ -110,7 +128,7 @@ class Game:
             print("Don't have enough chips to go to war! surrenders")
             return False
         else:
-            txt = input ("Go to war?(Y/n)\n")
+            txt = input("Go to war?(Y/n)\n")
             return txt != "n"
     
         
