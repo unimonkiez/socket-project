@@ -9,7 +9,7 @@ serverGame = None
 async def start_game(amount):
     # await asyncio.sleep(1)
     global serverGame
-    serverGame = ServerGame(20)
+    serverGame = ServerGame(amount)
 
     res = Response(
         ResponseTypes.accept,
