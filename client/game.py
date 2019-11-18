@@ -52,7 +52,7 @@ class Game:
             if (res["autoSurrender"]):
                 reason = " (Because there weren't enough cards for war)"
             print(
-                "\nRound {} tie breaker:\nPlayer surrendered!{}\nThe bet: {}$\nDealer won: {}$\nPlayer won: {}$\n"
+                "\nRound {} tie breaker:\nPlayer surrendered!{}\nThe bet: {}$\nDealer won: {}$\nPlayer won: {}$"
                 .format(res["round"], reason, res["bet"], res["dealerEarn"], res["playerEarn"])
             )
         else:
@@ -69,7 +69,7 @@ class Game:
                 lastLine = "The bet is {}$\n".format(res["bet"])
 
             print(
-                "\nThe result of round {} is {}!\n{}Dealer’s card: {},\nPlayer’s card: {}\n{}"
+                "\nThe result of round {} is {}!\n{}Dealer’s card: {},\nPlayer’s card: {}{}"
                 .format(res["round"], res["result"].displayName, secondLine, res["dealersCard"].toNiceString(), res["playersCard"].toNiceString(), lastLine)
             )
     

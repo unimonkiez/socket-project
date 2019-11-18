@@ -21,7 +21,10 @@ def _connection_handler(conn, handler):
 def _listen_handler(s, getIsRunning, handler):
     try:
         while getIsRunning():
-            conn, addr = s.accept()
+            try:
+                conn, addr = s.accept()
+            except Exception:
+                pass
             thread = Thread(target = _connection_handler, args = (conn, handler, ))
             thread.start()
             
@@ -46,7 +49,6 @@ def listen(port, handler):
     s.bind((HOST, port))
     s.listen()
     
-
     thread = Thread(target = _listen_handler, args = (s, getIsRunning, handler, ))
     thread.start()
 
