@@ -1,10 +1,10 @@
-from common.event import do_request as _do_request
+from common.event import get_do_request as _get_do_request
 from common.port_manager import LISTENER_PORT
 from common.response import Response, ResponseTypes
 
 class _Connection:
     def __init__(self, port):
-        self._port = port
+        self._do_request = _get_do_request(port)
     
     def do_request(self, data, sucessHandler, rejectHandler):
         def reqHandler(resDict):
@@ -12,7 +12,7 @@ class _Connection:
             res.handle(sucessHandler, rejectHandler)
 
         try:
-            _do_request(self._port, data, reqHandler)
+            self._do_request(data, reqHandler)
         except ConnectionRefusedError as err:
             rejectHandler({
                 "message": str(err)

@@ -31,20 +31,22 @@ class ClientManager:
 
         res = None
 
-        try:
-            handler = switcher.get(data["api"])
-            resData = handler(data["data"])
+        handler = switcher.get(data["api"])
+        resData = handler(data["data"])
 
-            res = Response(ResponseTypes.accept, resData)
-        except Exception as err:
-            res = Response(ResponseTypes.reject, {
-                "message": str(err)
-            })
+        res = Response(ResponseTypes.accept, resData)
+        # try:
+            
+        # except Exception as err:
+        #     res = Response(ResponseTypes.reject, {
+        #         "message": str(err)
+        #     })
         
         return res.toDict()
     
-    def _bet_handler(self, data): 
+    def _bet_handler(self, data):
         bet = data["bet"]
+        print("bettt", bet)
         self._game.set_bet(bet)
 
         return self._game_progress_res()

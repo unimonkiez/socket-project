@@ -45,12 +45,17 @@ def listen(port, handler):
 
     return terminateListener
 
-def do_request(port, data: dict, handler):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect((HOST, port))
+def get_do_request(port):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((HOST, port))
+
+    def do_request(data: dict, handler):
+        nonlocal s
         s.sendall(json.dumps(data).encode())
         dataBytes = s.recv(1024)
 
         if (int.from_bytes(dataBytes, 'big') != 0):
             res = json.loads(dataBytes.decode())
             handler(res)
+
+    return do_request

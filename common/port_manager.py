@@ -1,4 +1,4 @@
-LISTENER_PORT = 65198
+LISTENER_PORT = 65196
 
 class PortManager:
     def __init__(self):
