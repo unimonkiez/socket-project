@@ -7,10 +7,17 @@ class ServerManager:
     def __init__(self):
         self.port_manager = PortManager()
         self._client_managers = []
+        self._terminate = None
 
     def start(self):
-        listen(LISTENER_PORT, self._listener_handler)
-        print("Server started on port {}\n".format(LISTENER_PORT))
+        self._terminate = listen(LISTENER_PORT, self._listener_handler)
+        print("Server started on port {}".format(LISTENER_PORT))
+
+    def terminate(self):
+        self._terminate()
+        print("Server stopped on port {}".format(LISTENER_PORT))
+        for client_manager in self._client_managers: 
+            client_manager.terminate()
 
     def _listener_handler(self, data):
         res = None
@@ -20,6 +27,7 @@ class ServerManager:
             clientManager = None
             def terminateClient():
                 nonlocal clientManager
+                nonlocal freePort
 
                 freePort()
                 self._client_managers.remove(clientManager)
@@ -28,7 +36,7 @@ class ServerManager:
             clientManager.start()
 
             self._client_managers.append(
-                terminateClient
+                clientManager
             )
 
             res = Response(ResponseTypes.accept, {

@@ -1,8 +1,8 @@
-LISTENER_PORT = 65196
+LISTENER_PORT = 65260
 
 class PortManager:
     def __init__(self):
-        self._free_ports = list(range(65201, 65534))
+        self._free_ports = list(range(65261, 65263))
         self._taken_ports = []
 
     @property
@@ -21,7 +21,9 @@ class PortManager:
         self._taken_ports.append(clientPort)
 
         def free_port():
-            self._free_ports.remove(clientPort)
+            nonlocal clientPort
+
+            self._taken_ports.remove(clientPort)
             self._free_ports.append(clientPort)
         
         return clientPort, free_port

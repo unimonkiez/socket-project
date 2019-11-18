@@ -6,13 +6,19 @@ from common.response import Response, ResponseTypes
 
 class ClientManager:
     def __init__(self, port, terminate, initialData):
-        self.terminate = terminate
+        self._terminate = terminate
+        self._terminateConnetion = None
         self._port = port
         self._game = Game(initialData["amount"])
 
     def start(self):
-        listen(self._port, self._listener_handler)
-        print("Client started on port {}\n".format(self._port))
+        self._terminateConnetion = listen(self._port, self._listener_handler)
+        print("Client started on port {}".format(self._port))
+
+    def terminate(self):
+        self._terminateConnetion()
+        self._terminate()
+        print("Client stopped on port {}".format(self._port))
 
     @property
     def initialResponse(self):
@@ -46,7 +52,6 @@ class ClientManager:
     
     def _bet_handler(self, data):
         bet = data["bet"]
-        print("bettt", bet)
         self._game.set_bet(bet)
 
         return self._game_progress_res()
@@ -86,7 +91,7 @@ class ClientManager:
             "dealt": None
         }
 
-        if (res["result"] != GameResults.tie):
+        if (self._game.result != GameResults.tie):
             self._game.nextRound()
             res["ended"] = self._game.ended
             res["dealt"] = self._game.playersCard.toDict()

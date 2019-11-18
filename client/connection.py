@@ -4,7 +4,8 @@ from common.response import Response, ResponseTypes
 
 class _Connection:
     def __init__(self, port):
-        self._do_request = _get_do_request(port)
+        self._port = port
+        self._do_request = None
     
     def do_request(self, data, sucessHandler, rejectHandler):
         def reqHandler(resDict):
@@ -12,6 +13,8 @@ class _Connection:
             res.handle(sucessHandler, rejectHandler)
 
         try:
+            if (self._do_request == None):
+                self._do_request = _get_do_request(self._port)
             self._do_request(data, reqHandler)
         except ConnectionRefusedError as err:
             rejectHandler({
