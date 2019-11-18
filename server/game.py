@@ -62,7 +62,6 @@ class Game:
 
     @property
     def autoSurrender(self):
-        print(self._last_round["autoSurrender"])
         return self._last_round["autoSurrender"]
 
     @property

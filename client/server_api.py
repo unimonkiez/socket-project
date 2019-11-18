@@ -24,7 +24,7 @@ async def start_game(amount):
     # res = Response(
     #     ResponseTypes.reject,
     #     {
-    #         "messave": "No space",
+    #         "message": "No space",
     #     }
     # )
 

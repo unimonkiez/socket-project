@@ -1,6 +1,6 @@
 import client.server_api as server_api
 from common.game_results import GameResults
-
+from common.noop import noop
 
 class Game:
     def start(self):
@@ -42,6 +42,9 @@ class Game:
     def _tie_break_success(self, res):
         self._result = res["result"]
         self._print_round_details(res)
+    
+    def _play_again_sucess(self, res):
+        self.start()
 
 
     def _print_round_details(self, res):
@@ -76,8 +79,11 @@ class Game:
         if (ended):
             print("The game has ended!\nPlayer won: {}$\n".format(res["amountLeft"] - res["originalAmount"]))
             playAgain = self._get_play_again()
+            req = server_api.play_again_sync(playAgain)
             if (playAgain):
-                self.start()
+                req.handle(self._play_again_sucess, self._start_again)
+            else:
+                req.handle(noop, noop)
         
         return ended == False
             
