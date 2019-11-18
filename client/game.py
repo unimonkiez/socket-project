@@ -3,18 +3,20 @@ from common.game_results import GameResults
 from common.noop import noop
 
 class Game:
+    def __init__(self):
+        self._connection = None
+
     def start(self):
         amount = self._get_amount()
-        req = server_api.start_game_sync(amount)
-        req.handle(self._start_success, self._start_again)
+        server_api.start_game_sync(amount, self._start_success, self._start_again)
 
-    def _start_success(self, res):
+    def _start_success(self, connection, res):
+        self._connection = connection
         self._dealt(res)
 
     def _dealt(self, res):
         bet = self._get_bet(res)
-        req = server_api.bet_sync(bet)
-        req.handle(self._bet_success, self._start_again)
+        server_api.bet_sync(self._connection, bet, self._bet_success, self._start_again)
 
     def _start_again(self, res): 
         txt = input("Failed with message: \n{}\nPress Enter to retry, \"q\" to quit\n".format(res["message"]))
@@ -35,8 +37,7 @@ class Game:
 
     def _tie_break(self, res): 
         isWar = self._get_is_war(res)
-        req = server_api.tie_break_sync(isWar)
-        req.handle(self._bet_success, self._start_again)
+        server_api.tie_break_sync(self._connection, isWar, self._bet_success, self._start_again)
     
     def _tie_break_success(self, res):
         self._result = res["result"]
@@ -77,11 +78,10 @@ class Game:
         if (ended):
             print("The game has ended!\nPlayer won: {}$\n".format(res["amountLeft"] - res["originalAmount"]))
             playAgain = self._get_play_again()
-            req = server_api.play_again_sync(playAgain)
             if (playAgain):
-                req.handle(self._play_again_sucess, self._start_again)
+                server_api.play_again_sync(self._connection, playAgain, self._play_again_sucess, self._start_again)
             else:
-                req.handle(noop, noop)
+                server_api.play_again_sync(self._connection, playAgain, noop, noop)
         
         return ended == False
             

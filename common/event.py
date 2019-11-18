@@ -5,21 +5,22 @@ import json
 
 HOST = '127.0.0.1'
 
-def _listen_handler(s, handler):
+def _listen_handler(s, getIsRunning, handler):
     try:
-        conn, addr = s.accept()
-        with conn:
-            print('Connected by', addr)
-            while True:
-                dataBytes = conn.recv(1024)
-                if not dataBytes:
-                    break
-                data = json.loads(dataBytes.decode())
-                res: dict = handler(data)
-                if (res != None):
-                    conn.send(json.dumps(res).encode())
-                else:
-                    conn.send(bytes([0]))
+        while getIsRunning():
+            conn, addr = s.accept()
+            with conn:
+                print('Connected by', addr)
+                while True:
+                    dataBytes = conn.recv(1024)
+                    if not dataBytes:
+                        break
+                    data = json.loads(dataBytes.decode())
+                    res: dict = handler(data)
+                    if (res != None):
+                        conn.send(json.dumps(res).encode())
+                    else:
+                        conn.send(bytes([0]))
     except ConnectionAbortedError:
         pass
 
@@ -28,11 +29,18 @@ def listen(port, handler):
     s.bind((HOST, port))
     s.listen()
 
+    isRunning = True
+    def getIsRunning():
+        nonlocal isRunning
+        return isRunning
+
     def terminateListener():
         nonlocal s
+        nonlocal isRunning
+        isRunning = False
         s.close()
 
-    thread = Thread(target = _listen_handler, args = (s, handler, ))
+    thread = Thread(target = _listen_handler, args = (s, getIsRunning, handler, ))
     thread.start()
 
     return terminateListener

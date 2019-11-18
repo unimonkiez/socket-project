@@ -17,6 +17,30 @@ class CardRanks(Enum):
     def displayName(self):
         return self.value.displayName
 
+    @classmethod
+    def fromStr(cls, txt):
+        switcher = {
+            "a": CardRanks.ace,
+            "2": CardRanks.num2,
+            "3": CardRanks.num3,
+            "4": CardRanks.num4,
+            "5": CardRanks.num5,
+            "6": CardRanks.num6,
+            "7": CardRanks.num7,
+            "8": CardRanks.num8,
+            "9": CardRanks.num9,
+            "10": CardRanks.num10,
+            "j": CardRanks.jack,
+            "q": CardRanks.queen,
+            "k": CardRanks.king
+        }
+        return switcher.get(txt)
+
+
+    def toStr(self):
+        return self.text
+        
+
     ace = CardRank("a", 13, "ace")
     num2 = CardRank("2", 1, "2")
     num3 = CardRank("3", 2, "3")
@@ -59,18 +83,17 @@ class Card:
         return deck
     
     @classmethod
-    def fromString(cls, txt):
-        txtLength = len(txt)
-        rank = None
-        suit = None
-        if (txtLength == 2):
-          rank = txt[0:1]
-          suit = txt[1:2]
-        elif (txtLength == 3):
-          rank = txt[0:2]
-          suit = txt[2:3]
+    def fromDict(cls, someDict):
+        rank = CardRanks.fromStr(someDict["rank"])
+        suit = CardSuits(someDict["suit"])
         
-        return Card(suit, rank)
+        return Card(rank, suit)
+    
+    def toDict(self):
+        return {
+            "rank": self.rank.toStr(),
+            "suit": self.suit.value
+        }
       
     def compare(self, card):
           rankNumber = self.rank.number
@@ -82,9 +105,6 @@ class Card:
                 return CardCompare.wins
           else:
                 return CardCompare.loses
-    
-    def toString(self):
-        return "{}{}".format(self.rank.text, self.suit.text)
       
     def toNiceString(self):
         return "{} of {}".format(self.rank.displayName.capitalize(), self.suit.name.capitalize())

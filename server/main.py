@@ -1,8 +1,8 @@
-from server import Server
+from server.server_manager import ServerManager
 
 def main(argv=None):
-    server = Server()
-    server.start()
+    serverManager = ServerManager()
+    serverManager.start()
 
     return 0
 
