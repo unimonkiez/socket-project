@@ -13,9 +13,14 @@ def main(argv=None):
         message
         )
     
-    sleep(10)
+    sleep(2)
 
     terminate()
+
+    # terminate = listen(
+    #     20000,
+    #     message
+    #     )
 
     return 0
 
