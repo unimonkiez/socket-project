@@ -71,7 +71,7 @@ class Game:
 
     def nextRound(self):
         self._validate_game()
-        if (len(self._deck) < 2):
+        if (len(self._deck) < 2 or self.amount == 0):
             self.ended = True
         else:
             self._rounds.append({
