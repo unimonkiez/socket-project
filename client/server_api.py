@@ -59,14 +59,14 @@ def _create_res():
         "cardsDiscarded": serverGame.cardsDiscarded,
         "amountLeft": serverGame.amount,
         "originalAmount": serverGame.originalAmount,
-        "dealt": None,
-        "ended": None
+        "ended": serverGame.ended,
+        "dealt": None
     }
 
     if (resDict["result"] != GameResults.tie):
         serverGame.nextRound()
-        resDict["dealt"] = serverGame.playersCard
         resDict["ended"] = serverGame.ended
+        resDict["dealt"] = serverGame.playersCard
 
     res = Response(
         ResponseTypes.accept,
