@@ -16,7 +16,11 @@ class Game:
 
     def _dealt(self, res):
         bet = self._get_bet(res)
-        server_api.bet_sync(self._connection, bet, self._bet_success, self._reject_start_again)
+        if (bet == False):
+            self._print_end_game(res)
+            self._end_game()
+        else:
+            server_api.bet_sync(self._connection, bet, self._bet_success, self._reject_start_again)
 
     def _reject_start_again(self, res): 
         txt = input("Failed with message: \n{}\nPress Enter to retry, \"q\" to quit\n".format(res["message"]))
@@ -76,14 +80,20 @@ class Game:
     def _validate_game_not_ended(self, res):
         ended = res["ended"]
         if (ended):
-            print("The game has ended!\nPlayer won: {}$\n".format(res["amountLeft"] - res["originalAmount"]))
+            self._print_end_game(res)
             playAgain = self._get_play_again()
             if (playAgain):
                 server_api.play_again_sync(self._connection, playAgain, self._play_again_sucess, self._reject_start_again)
             else:
-                server_api.play_again_sync(self._connection, playAgain, noop, noop)
+                self._end_game()
         
         return ended == False
+    
+    def _print_end_game(self, res):
+        print("The game has ended!\nPlayer won: {}$\n".format(res["amountLeft"] - res["originalAmount"]))
+
+    def _end_game(self):
+        server_api.play_again_sync(self._connection, False, noop, noop)
             
     def _round_done(self, res):
         self._dealt(res)
@@ -107,8 +117,10 @@ class Game:
         amount = res["amountLeft"]
         bet = None
         while (bet == None):
-            txt = input("\nYou got dealt the card {}, how much you want to bet? ({}$ left)\n".format(res["dealt"].toNiceString(), res["amountLeft"]))
+            txt = input("\nYou got dealt the card {}, how much you want to bet? ({}$ left) \"q\" to quit\n".format(res["dealt"].toNiceString(), res["amountLeft"]))
             try:
+                if (txt == "q"):
+                    return False
                 num = int(txt)
                 if (num <= 0):
                     print("Bet should be positive, \"{}\" is invalid, try again\n".format(bet))
