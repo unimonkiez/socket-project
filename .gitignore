@@ -1,2 +1,6 @@
 *.pyc
 /socket_project.egg-info
+
+*.spec
+/build
+/dist
