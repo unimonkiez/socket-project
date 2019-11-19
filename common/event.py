@@ -30,6 +30,7 @@ def _listen_handler(s, getIsRunning, handler):
 
 def listen(port, handler):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     isRunning = True
     def getIsRunning():
@@ -40,7 +41,6 @@ def listen(port, handler):
         nonlocal s
         nonlocal isRunning
         isRunning = False
-        # s.shutdown(socket.SHUT_WR)
         s.close()
 
     s.bind((HOST, port))
@@ -54,6 +54,8 @@ def listen(port, handler):
 
 def get_do_request(port):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
     s.connect((HOST, port))
 
     def do_request(data: dict, handler):

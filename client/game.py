@@ -8,7 +8,7 @@ class Game:
 
     def start(self):
         amount = self._get_amount()
-        server_api.start_game_sync(amount, self._start_success, self._start_again)
+        server_api.start_game_sync(amount, self._start_success, self._reject_start_again)
 
     def _start_success(self, connection, res):
         self._connection = connection
@@ -16,9 +16,9 @@ class Game:
 
     def _dealt(self, res):
         bet = self._get_bet(res)
-        server_api.bet_sync(self._connection, bet, self._bet_success, self._start_again)
+        server_api.bet_sync(self._connection, bet, self._bet_success, self._reject_start_again)
 
-    def _start_again(self, res): 
+    def _reject_start_again(self, res): 
         txt = input("Failed with message: \n{}\nPress Enter to retry, \"q\" to quit\n".format(res["message"]))
         if (txt != "q"):
             self.start()
@@ -37,7 +37,7 @@ class Game:
 
     def _tie_break(self, res): 
         isWar = self._get_is_war(res)
-        server_api.tie_break_sync(self._connection, isWar, self._bet_success, self._start_again)
+        server_api.tie_break_sync(self._connection, isWar, self._bet_success, self._reject_start_again)
     
     def _tie_break_success(self, res):
         self._result = res["result"]
@@ -79,7 +79,7 @@ class Game:
             print("The game has ended!\nPlayer won: {}$\n".format(res["amountLeft"] - res["originalAmount"]))
             playAgain = self._get_play_again()
             if (playAgain):
-                server_api.play_again_sync(self._connection, playAgain, self._play_again_sucess, self._start_again)
+                server_api.play_again_sync(self._connection, playAgain, self._play_again_sucess, self._reject_start_again)
             else:
                 server_api.play_again_sync(self._connection, playAgain, noop, noop)
         

@@ -20,6 +20,12 @@ class _Connection:
             rejectHandler({
                 "message": str(err)
             })
+        except ConnectionResetError as err:
+            rejectHandler({
+                "message": str(err)
+            })
+        except Exception:
+            raise
 
 _mainConnection = _Connection(LISTENER_PORT)
 
