@@ -7,7 +7,7 @@
 2. Run the server, should look like this  
   ![](server-running.png)
 3. Run client (up to 2 at the same time)
-    * Will decline more than 2 clients at the same time
+    * Will decline more than 2 clients at the same time  
     ![](client-decline.png) 
     * Playing the client is pretty straight forward, can quit before the bet or at end of deck, **should do it that way because then the server will free the port**.  
     ![](client-playing.png)
