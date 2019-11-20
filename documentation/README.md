@@ -2,14 +2,14 @@
 
 ### Playing
 1. Decide if running `source code` or `exe` files  
-    * For running `exe`, download files here, then double click either `server.exe` or `client.exe`.
+    * For running `exe`, [download files here](https://drive.google.com/drive/folders/15UkXWRT1hTNS0HSgRaINdK-7Nt6SeYTH?usp=sharing), then double click either `server.exe` or `client.exe`.
     * For running source code, read `README` on project's root.
 2. Run the server, should look like this
   ![](server-running.png)
 3. Run client (up to 2 at the same time)
     * Will decline more than 2 clients at the same time
     ![](client-decline.png) 
-    * Playing the client is pretty straight forward, can quit at before bet or at end of deck
+    * Playing the client is pretty straight forward, can quit before the bet or at end of deck, **should do it that way because then the server will free the port**.  
     ![](client-playing.png)
 ### Design
 Here I'll explain the code and the design pattern I chose
