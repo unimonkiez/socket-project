@@ -7,6 +7,15 @@
     ```sh
         py setup.py develop
     ```
+* Now you're ready!
+  * Running server (`pwd: project's root`)
+    ```sh
+    server
+    ```
+  * Running client (`pwd: project's root`)
+    ```sh
+    client
+    ```
 
 ### Build
     * Run in terminal
