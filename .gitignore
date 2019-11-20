@@ -1,5 +1,5 @@
 *.pyc
-/socket_project.egg-info
+socket_project.egg-info
 
 *.spec
 /build
