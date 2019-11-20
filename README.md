@@ -8,11 +8,11 @@
         py setup.py develop
     ```
 * Now you're ready!
-  * Running server (`pwd: project's root`)
+  * Running server
     ```sh
     server
     ```
-  * Running client (`pwd: project's root`)
+  * Running client
     ```sh
     client
     ```
