@@ -8,7 +8,11 @@ HOST = '127.0.0.1'
 def _connection_handler(conn, handler):
     with conn:
         while True:
-            dataBytes = conn.recv(1024)
+            dataBytes = None
+            try:
+                dataBytes = conn.recv(1024)
+            except Exception:
+                pass
             if not dataBytes:
                 break
             data = json.loads(dataBytes.decode())

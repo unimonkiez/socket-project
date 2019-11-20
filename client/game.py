@@ -73,7 +73,7 @@ class Game:
                 lastLine = "The bet is {}$\n".format(res["bet"])
 
             print(
-                "\nThe result of round {} is {}!\n{}Dealer’s card: {},\nPlayer’s card: {}{}"
+                "\nThe result of round {} is {}!\n{}Dealer’s card: {},\nPlayer’s card: {}\n{}"
                 .format(res["round"], res["result"].displayName, secondLine, res["dealersCard"].toNiceString(), res["playersCard"].toNiceString(), lastLine)
             )
     
